@@ -1,5 +1,6 @@
 {
     "require": {
-        "twilio/sdk": "dev-master"
+        "twilio/sdk": "5.42.2",
+        "sms77/api": "v2.5.0"
     }
 }

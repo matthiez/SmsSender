@@ -1,37 +1,42 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "8565ca24af610cecb5285cd7634ade9d",
+    "content-hash": "31e38bb5168b4dc48892ac4cf4192a56",
     "packages": [
         {
-            "name": "twilio/sdk",
-            "version": "dev-master",
+            "name": "sms77/api",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "292fef46097bcc935007a117ddce9acc40a1a8c1"
+                "url": "https://github.com/sms77io/php-client.git",
+                "reference": "ec0339d72bcdfa930b80ab1c8cd2e2838b944d46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/292fef46097bcc935007a117ddce9acc40a1a8c1",
-                "reference": "292fef46097bcc935007a117ddce9acc40a1a8c1",
+                "url": "https://api.github.com/repos/sms77io/php-client/zipball/ec0339d72bcdfa930b80ab1c8cd2e2838b944d46",
+                "reference": "ec0339d72bcdfa930b80ab1c8cd2e2838b944d46",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.1"
+                "ext-ctype": "*",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.3"
             },
             "require-dev": {
-                "mockery/mockery": ">=0.7.2",
-                "phpunit/phpunit": "4.5.*"
+                "ext-simplexml": "*",
+                "ext-soap": "*",
+                "phpunit/phpunit": "^9"
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "Services/Twilio.php"
-                ]
+                "psr-4": {
+                    "Sms77\\Api\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -39,12 +44,72 @@
             ],
             "authors": [
                 {
-                    "name": "Kevin Burke",
-                    "email": "kevin@twilio.com"
-                },
+                    "name": "sms77 e.K.",
+                    "email": "a.matthies@sms77.io",
+                    "homepage": "https://www.sms77.io",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Official API Client for requesting the Sms77.io SMS Gateway.",
+            "homepage": "https://github.com/sms77io/php-client",
+            "keywords": [
+                "2fa",
+                "cnam",
+                "gateway",
+                "hlr",
+                "mnp",
+                "sms",
+                "text2speech",
+                "tts"
+            ],
+            "support": {
+                "docs": "https://github.com/sms77io/php-client",
+                "email": "support@sms77.io",
+                "issues": "https://github.com/sms77io/php-client/issues",
+                "rss": "https://www.sms77.io/de/feed/",
+                "source": "https://github.com/sms77io/php-client"
+            },
+            "time": "2021-09-21T07:31:40+00:00"
+        },
+        {
+            "name": "twilio/sdk",
+            "version": "5.42.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twilio/twilio-php.git",
+                "reference": "0cfcb871b18a9c427dd9e8f0ed7458d43009b48a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/0cfcb871b18a9c427dd9e8f0ed7458d43009b48a",
+                "reference": "0cfcb871b18a9c427dd9e8f0ed7458d43009b48a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "apigen/apigen": "^4.1",
+                "guzzlehttp/guzzle": "^6.3",
+                "phpunit/phpunit": ">=4.5"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "An HTTP client to execute the API requests"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Twilio\\": "src/Twilio/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
                 {
-                    "name": "Kyle Conroy",
-                    "email": "kyle+pear@twilio.com"
+                    "name": "Twilio API Team",
+                    "email": "api@twilio.com"
                 }
             ],
             "description": "A PHP wrapper for Twilio's API",
@@ -54,17 +119,20 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2016-01-29 00:19:22"
+            "support": {
+                "issues": "https://github.com/twilio/twilio-php/issues",
+                "source": "https://github.com/twilio/twilio-php/tree/5.42.2"
+            },
+            "time": "2020-02-05T19:55:13+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "twilio/sdk": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }

@@ -1,5 +1,9 @@
 <?php namespace Tiipiik\SmsSender\Classes;
 
+use Sms77\Api\Client;
+use Sms77\Api\Params\SmsParams;
+use Twilio\Exceptions\ConfigurationException;
+use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Client as Services_Twilio;
 use Exception;
 use Tiipiik\SmsSender\Models\Setting;
@@ -19,7 +23,7 @@ class Sender
         /* Find settings for provider datas */
         $gateway = Setting::get('gateway');
         $from = Setting::get('from'); // Need to change that name
-        
+
         if ($gateway == 'clickatell') {
             $providerUsername = Setting::get('clickatell_user_name');
             $providerPasswd = Setting::get('clickatell_passwd');
@@ -30,20 +34,20 @@ class Sender
             $text = $message;
             $text = self::hex_chars($text);
             $text = urlencode($text);
-            
+
             // auth call
             $url = $baseUrl.'/http/auth?user='.$providerUsername.'&password='.$providerPasswd.'&api_id='.$providerApiId;
-            
+
             // do auth call
             $ret = file($url);
-         
+
             // explode our response. return string is on first line of the data returned
             $sess = explode(':', $ret[0]);
-            
+
             $url = $baseUrl.'/http/sendmsg?session_id='.$sessId.'&to='.$to.'&unicode=1&text='.$text;
-            
+
             $status = '';
-            
+
             if ($sess[0] == 'OK') {
                 $sessId = trim($sess[1]); // remove any whitespace
                 $url = "$baseUrl/http/sendmsg?session_id=$sessId&to=$to&unicode=1&text=$text";
@@ -51,13 +55,13 @@ class Sender
                 // do sendmsg call
                 $ret = file($url);
                 $send = explode(':', $ret[0]);
-        
+
                 if ($send[0] == "ID") {
                     // All is fine, the message is sent
                     $codeStatus = 1;
                     $status = 'Sent';
                     $sessId = $send[1];
-                    
+
                 } else {
                     // Hum, sending failed
                     $codeStatus = 2;
@@ -115,11 +119,45 @@ class Sender
                 'short_status' => (int) $codeStatus,
             ];
             MessageHistory::saveHistory($messageDatas);
+        } elseif ($gateway == 'sms77') {
+            $providerApiKey = Setting::get('sms77_api_key');
+            $codeStatus = 2;
+
+            try {
+                $client = new Client($providerApiKey, 'OctoberCMS.SmsSender');
+            } catch (Exception $e) {
+                echo $e->getMessage();
+            }
+
+            $smsParams = (new SmsParams)
+                ->setFrom($from)
+                ->setText($message)
+                ->setTo($to)
+            ;
+
+            try {
+                $res = $client->smsJson($smsParams);
+
+                foreach ($res->messages as $msg) {
+                    $codeStatus = 1;
+
+                    MessageHistory::saveHistory([ // Store datas in table
+                        'from' => $from,
+                        'message' => $message,
+                        'sess_id' => $msg->id,
+                        'short_status' => $codeStatus,
+                        'status' => 'Sent',
+                        'to' => $to,
+                    ]);
+                }
+            } catch (Exception $e) {
+                echo $e->getMessage();
+            }
         }
-        
-        ($codeStatus == 1 ? true : false);
+
+        return $codeStatus == 1;
     }
-    
+
     /*
      * Get all messages
      * @param int number of days to get messages
@@ -132,7 +170,7 @@ class Sender
     {
         // Convert days to correct date formatting
         $fromDays = date("Y-m-d 00:00:01", time() - (1 * ($days * 24) * 60 * 60));
-        
+
         $messages = MessageHistory::where('created_at', '>', $fromDays);
         if ($status != 0) {
             $messages = $messages->where('short_status', '!=', $status);
@@ -140,10 +178,10 @@ class Sender
         $messages = $messages->orderBy('created_at', 'desc')
             ->take($rows)
             ->get();
-        
+
         return $messages;
     }
-    
+
     /*
      * Transform text to unicode usable by Clickatell, witch seems to use specific unicode
      * @param string text to convert
